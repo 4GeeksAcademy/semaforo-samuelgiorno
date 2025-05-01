@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from "react";
 
 const TrafficLight = () => {
-  const [color, setColor] = useState("red");
+  const [color, setColor] = useState("green");
   const [showPurple, setShowPurple] = useState(false);
+  const getNextColor = (currentColor) => {
+    const baseColors = ["green", "yellow", "red"];
+    const colors = showPurple ? [...baseColors, "purple"] : baseColors;
+    const currentIndex = colors.indexOf(currentColor);
+    return colors[(currentIndex + 1) % colors.length];
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setColor((prevColor) => getNextColor(prevColor));
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [showPurple]);
 
   const handleClick = (newColor) => {
     setColor(newColor);
-  };
-
-  const toggleColors = () => {
-    setColor((prev) => {
-      if (prev === "red") return "green";
-      if (prev === "green") return "yellow";
-      if (prev === "yellow") return "red";
-      if (prev === "purple") return "red";
-      return "red";
-    });
   };
 
   const addPurpleLight = () => {
@@ -46,9 +50,6 @@ const TrafficLight = () => {
       </div>
 
       <div className="mt-4">
-        <button className="btn btn-primary me-2" onClick={toggleColors}>
-          Cambiar color automáticamente
-        </button>
         <button className="btn btn-secondary" onClick={addPurpleLight}>
           Añadir luz púrpura
         </button>
